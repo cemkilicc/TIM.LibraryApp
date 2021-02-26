@@ -1,0 +1,94 @@
+﻿@using TIM.LibraryApp.Models
+@model IEnumerable<DailyReport>
+
+@{
+    ViewBag.Title = "DailyReport";
+}
+
+<!-- begin panel -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Book List</h4>
+    </div>
+    <div class="panel-body">
+        <!-- begin table-responsive -->
+        <div class="table-responsive">
+            <table class="table table-hover m-b-0 text-inverse">
+                @if (Model == null)
+                {
+                    <tr>
+                        <td colspan="10">No Record's found.</td>
+                    </tr>
+                }
+                else
+                {
+                    <thead>
+                        <tr class="danger">
+                            <th></th>
+                            <th>Member Name</th>
+                            <th>Book Name</th>
+                            <th>Date of Issue</th>
+                            <th>Due Date</th>
+                            <th>State</th>
+                            <th>Penalty</th>
+                        </tr>
+                    </thead>
+
+                    int i = 1;
+
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.MemberName</td>
+                            <td>@item.BookName</td>
+                            <td>@(item.ReqDate.Day + "." + item.ReqDate.Month + "." + item.ReqDate.Year)</td>
+                            <td>@(item.DueDate.Day + "." + item.DueDate.Month + "." + item.DueDate.Year)</td>
+                            @if (item.XdayLeft > 0)
+                            {
+                                if(item.XdayLeft == 1)
+                                {
+                                    <td>@item.XdayLeft day left</td>
+                                }
+                                else if(item.XdayLeft == 2)
+                                {
+                                    <td>@item.XdayLeft days left</td>
+                                }
+                            }
+                            else if (item.XdayLeft == 0)
+                            {
+                                <td><span class="label label-warning f-s-11">The book requires to be delivered today.</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="label label-danger f-s-11">Not returned! - Due date : @(item.DueDate.Day + "." + item.DueDate.Month + "." + item.DueDate.Year)</span></td>
+                            }
+
+                            @if (item.Penalty == 0)
+                            {
+                                <td>-</td>
+                            }
+                            else
+                            {
+                                <td>@item.Penalty</td>
+                            }
+                        </tr>
+                        i++;
+                    }
+                }
+            </table>
+        </div>
+        <!-- end table-responsive -->
+    </div>
+</div>
+<!-- end panel -->
+
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <a href="javascript:history.back(-1);" class="btn btn-success">
+                <i class="fa fa-arrow-circle-left"></i> Back to previous page
+            </a>
+        </p>
+    </div>
+</div>

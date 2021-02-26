@@ -1,0 +1,53 @@
+﻿@using TIM.LibraryApp.Entities
+@model Books
+
+@{
+    ViewBag.Title = "AddBook";
+}
+
+<!-- begin panel -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Add New Book</h4>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm("CreateBook", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group row m-b-15">
+                <label class="col-form-label col-md-3">ISBN</label>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(model => model.ISBN, new { @class = "form-control m-b-5", @placeholder = "ISBN" })
+                    @Html.ValidationMessageFor(model => model.ISBN, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group row m-b-15">
+                <label class="col-form-label col-md-3">Book Name</label>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control m-b-5", @placeholder = "Book Name" })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group row m-b-15">
+                <label class="col-form-label col-md-3">Author</label>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(model => model.Author, new { @class = "form-control m-b-5", @placeholder = "Author" })
+                    @Html.ValidationMessageFor(model => model.Author, "", new { @class = "text-danger" })
+                </div>
+            </div>            
+            <div class="form-group row m-b-0">
+                <label class="col-md-3 col-sm-3 col-form-label">&nbsp;</label>
+                <div class="col-md-8 col-sm-8">
+                    <button type="submit" name="submit" class="btn btn-primary">Save</button>
+                    @if (ViewBag.Message != null)
+                    {
+                        <label class="col-form-label col-md-4" style="color: red">@ViewBag.Message</label>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- end panel -->

@@ -1,0 +1,94 @@
+﻿@using TIM.LibraryApp.Models
+@model BookListModel
+
+@{
+    ViewBag.Title = "Renew Issuing";
+
+    var member = ViewBag.member;
+    var members = ViewBag.members;
+    var dueDate = ViewBag.dueDate;
+}
+
+<!-- begin panel -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Renew Due Date</h4>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- begin table-responsive -->
+                <div class="table-responsive">
+                    <a href="" class="widget-card widget-card-rounded m-b-20" style="pointer-events: none; cursor: default;" data-id="widget">
+                        <div class="widget-card-cover"></div>
+                        <div class="widget-card-content">
+                            <div class="row">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td><h2><small>Book Name</small></h2></td>
+                                            <td class="row p-l-20"><h2><small> : </small></h2><h2 class="f-s-18 text-black-transparent-7 p-l-5" style="padding-top: 8px">@Model.Name</h2></td>
+                                        </tr>
+                                        <tr>
+                                            <td><h2><small>Author</small></h2></td>
+                                            <td class="row p-l-20"><h2><small> : </small></h2><h2 class="f-s-18 text-black-transparent-7 p-l-5" style="padding-top: 8px">@Model.Author</h2></td>
+                                        </tr>
+                                        <tr>
+                                            <td><h2><small>ISBN</small></h2></td>
+                                            <td class="row p-l-20"><h2><small> : </small></h2><h5 class="text-black-transparent-7 p-l-5 p-t-10">@Model.ISBN</h5></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- end table-responsive -->
+            </div>
+            <div class="col-md-5">
+                @using (Html.BeginForm("SaveRenew", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.ISBN)
+
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <h6 class="mt-2">Choose member</h6>
+                        </div>
+                        <div class="col-md-8">
+                            <select id="memberID" name="memberID" class="form-control selectpicker" data-size="5" data-live-search="true" data-style="btn-white">
+                                <option value="@member.Id">@member.Name @member.Surname</option>
+                                @*@foreach (var item in members)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }*@
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <h6 class="mt-2">Choose Due Date</h6>
+                            <h4><small>(Normal due date is after 30 working days. (Except public holidays))</small></h4>
+                        </div>
+                        <div class="col-md-8 text-right">
+                            <input type="text" class="form-control" name="dueDate" data-date-format="dd/mm/yyyy" id="datepicker-autoClose" value="@(dueDate.Day + "/" + dueDate.Month + "/" + dueDate.Year)" placeholder="Choose Due Date" />
+                            <button id="saveTransaction" type="submit" name="submit" class="btn btn-dark width-70 m-t-15">Save</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end panel -->
+
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <a href="javascript:history.back(-1);" class="btn btn-success">
+                <i class="fa fa-arrow-circle-left"></i> Back to previous page
+            </a>
+        </p>
+    </div>
+</div>

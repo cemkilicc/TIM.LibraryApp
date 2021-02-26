@@ -1,0 +1,104 @@
+﻿@using TIM.LibraryApp.Models
+@model IEnumerable<BookListModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section BookListPartialViewScripts{
+    <script>
+        $(function () {
+            $.ajax({
+                type: "GET",
+                url: '/Home/GetBookList',
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#BooksContent').html(data);
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        });
+
+        $(function () {
+            $("#searchBook").click(function (e) {
+                e.preventDefault();
+
+                var name = $("#name").val();
+                var author = $("#author").val();
+                var isbn = $("#isbn").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: '/Home/SearchBookPartial',
+                    data: { "Name": name, "Author": author, "ISBN": isbn },
+                    datatype: "json",
+                    success: function (data) {
+                        $('#BooksContent').html(data);
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            });
+        });
+
+        $(function () {
+            $(document).on("click", ".deleteBook", function (e) {
+                e.preventDefault();
+
+                if (confirm("Are you sure?")) {
+                    var isbn = $(this).attr("isbn");
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/DeleteBook/" + isbn,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        cache: false,
+                        data: "{ isbn: '" + isbn + "'}",
+                        success: function (r) {
+                            if (r == "Success") {
+                                alert("The book was deleted successfully.");
+                                window.location.href = "/Home/Index";
+                            }
+                            else {
+                                alert("The record could not be deleted.!");
+                                window.location.href = "/Home/Index";
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+@using (Html.BeginForm(new { @class = "form-horizontal"}))
+{
+    <div class="form-group row m-b-15">
+        <div class="col-md-3">
+            <a href="/Home/DailyReport" class="btn btn-danger"><i class="fa fa-file-alt p-r-3"></i> Daily Report</a>
+        </div>
+        <div class="col-md-2 text-right">
+            <h1><small>Search Book...</small></h1>
+        </div>
+        <div class="col-md-2 text-right">
+            <input id="name" type="text" name="name" class="form-control m-b-5" placeholder="Book name" />
+        </div>
+        <div class="col-md-2 text-right">
+            <input id="author" type="text" name="author" class="form-control m-b-5" placeholder="Author" />
+        </div>
+        <div class="col-md-2 text-right">
+            <input id="isbn" type="text" name="isbn" class="form-control m-b-5" placeholder="ISBN" />
+        </div>
+        <div class="col-md-1 text-right">
+            <button id="searchBook" type="submit" name="submit" class="btn btn-dark"><i class="fa fa-search p-r-3"></i> Search</button>
+        </div>
+    </div>
+}
+
+@section BookListPartialViewDiv{
+    <div id="BooksContent"></div>
+}

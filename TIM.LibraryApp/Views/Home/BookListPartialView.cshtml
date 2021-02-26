@@ -1,0 +1,152 @@
+﻿<!-- begin panel -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Book List</h4>
+        <div class="panel-heading-btn">
+            <a id="reloadBooks" href="javascript:void(0);" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-redo"></i></a>
+        </div>
+    </div>
+    <div class="panel-body">
+        <!-- begin table-responsive -->
+        <div class="table-responsive">
+            <table class="table table-hover m-b-0 text-inverse">
+                @if (Model == null)
+                {
+                    <tr>
+                        <td colspan="10">No Record's found.</td>
+                    </tr>
+                }
+                else
+                {
+                    <thead>
+                        <tr class="danger">
+                            <th></th>
+                            <th>Name</th>
+                            <th>Author</th>
+                            <th>ISBN</th>
+                            <th>Availability</th>
+                            <th>Due Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    int i = 1;
+
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.Name</td>
+                            <td>@item.Author</td>
+                            <td>@item.ISBN</td>
+                            <td>
+                                @if (item.Issued == 0 || item.Issued == null)
+                                {
+                                    <span class="label label-success f-s-11">Available</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-danger f-s-11">Not Available</span>
+                                }
+                            </td>
+                            @if (item.Issued == 0 || item.Issued == null)
+                            {
+                                <td class="hidden"></td>
+                            }
+                            else
+                            {
+                                <td><span class="label label-danger f-s-11">@(item.DueDate.Day + "." + item.DueDate.Month + "." + item.DueDate.Year)</span></td>
+                            }
+                            <td class="with-btn text-right" nowrap>
+                                @if (item.Issued == 0 || item.Issued == null)
+                                {
+                                    <a id="@item.ISBN" href="@Url.Action("IssueBook", "Home", new {isbn = @item.ISBN })" class="btn btn-sm width-70" style="margin-right: 73px; background-color: #ffeb7f;" onMouseOver="this.style.backgroundColor='#e5d372'" onMouseOut="this.style.backgroundColor='#ffeb7f'"><i class="fa fa-share p-r-3"></i> Issue</a>
+                                }
+
+                                @if (item.Issued == 1)
+                                {
+
+                                    <a id="@item.ISBN" href="@Url.Action("Renew", "Home", new {isbn = @item.ISBN })" class="btn btn-sm btn-grey width-70"><i class="fa fa-history p-r-3"></i> Renew</a>
+                                                            <a isbn="@item.ISBN" href="javascript:void(0);" class="btn btn-sm btn-lightcoral width-70 returnBook" style="background-color: lightcoral" onMouseOver="this.style.backgroundColor='#c06666'" onMouseOut="this.style.backgroundColor='#f08080'"><i class="fa fa-times p-r-3"></i> Return</a>
+                                                        }
+                                <a id="@item.ISBN" href="@Url.Action("EditBook", "Home", new {isbn = @item.ISBN })" class="btn btn-sm btn-grey width-40"><i class="fa fa-edit p-r-3"></i></a>
+                                <a isbn="@item.ISBN" href="javascript:void(0);" class="btn btn-sm btn-danger width-40 deleteBook"><i class="fa fa-trash-alt p-r-3"></i></a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </table>
+        </div>
+        <!-- end table-responsive -->
+    </div>
+</div>
+<!-- end panel -->
+
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <a href="/Home/AddBook" class="btn btn-success">
+                <i class="fa fa-book"></i> Add New Book
+            </a>
+        </p>
+    </div>
+    <div class="col-md-6 text-right">
+        <p>
+            <a href="/Member/Members" class="btn btn-success">
+                <i class="fa fa-users"></i> Show All Members
+            </a>
+        </p>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#reloadBooks").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "GET",
+                url: '/Home/GetBookList',
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#BooksContent').html(data);
+                    $("#name").val('');
+                    $("#author").val('');
+                    $("#isbn").val('');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        });
+    });
+
+    $(function () {
+        $(".returnBook").click(function (e) {
+            e.preventDefault();
+
+            if (confirm("Are you sure?")) {
+                var isbn = $(this).attr("isbn");
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/ReturnBook/" + isbn,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    cache: false,
+                    data: "{ isbn: '" + isbn + "'}",
+                    success: function (r) {
+                        if (r == "Success") {
+                            alert("Book return is complete..");
+                            window.location.href = "/Home/Index";
+                        }
+                        else {
+                            alert("A problem occured.!");
+                            window.location.href = "/Home/Index";
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

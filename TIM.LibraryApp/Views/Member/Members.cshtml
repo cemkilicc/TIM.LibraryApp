@@ -1,0 +1,105 @@
+﻿@using TIM.LibraryApp.Entities
+@model IEnumerable<Members>
+
+@{
+    ViewBag.Title = "Members";
+}
+
+@section MembersViewScripts{
+    <script>
+        $(function () {
+            $(document).on("click", ".deleteMember", function (e) {
+                e.preventDefault();
+
+                if (confirm("Are you sure?")) {
+                    var id = $(this).attr("id");
+                    $.ajax({
+                        type: "POST",
+                        url: "/Member/DeleteMember/" + id,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        cache: false,
+                        data: "{ id: '" + id + "'}",
+                        success: function (r) {
+                            if (r == "Success") {
+                                alert("The member was deleted successfully.");
+                                window.location.href = "/Member/Members";
+                            }
+                            else {
+                                alert("The record could not be deleted.!");
+                                window.location.href = "/Member/Members";
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+<!-- begin panel -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Member List</h4>
+    </div>
+    <div class="panel-body">
+        <!-- begin table-responsive -->
+        <div class="table-responsive">
+            <table class="table table-hover m-b-0 text-inverse">
+                @if (Model == null)
+                {
+                    <tr>
+                        <td colspan="10">No Record's found.</td>
+                    </tr>
+                }
+                else
+                {
+                    <thead>
+                        <tr class="danger">
+                            <th></th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    int i = 1;
+
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.Name</td>
+                            <td>@item.Surname</td>
+                            <td class="with-btn text-right" nowrap>
+                                <a id="@item.Id" href="@Url.Action("ShowTransactions", "Member", new {id = @item.Id })" class="btn btn-sm btn-info width-110"><i class="fa fa-edit p-r-3"></i> Show Transactions</a>
+                                <a id="@item.Id" href="@Url.Action("EditMember", "Member", new {id = @item.Id })" class="btn btn-sm btn-grey width-40"><i class="fa fa-edit p-r-3"></i></a>
+                                <a id="@item.Id" href="javascript:void(0);" class="btn btn-sm btn-danger width-40 deleteMember"><i class="fa fa-trash-alt p-r-3"></i></a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </table>
+        </div>
+        <!-- end table-responsive -->
+    </div>
+</div>
+<!-- end panel -->
+
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <a href="javascript:history.back(-1);" class="btn btn-success">
+                <i class="fa fa-arrow-circle-left"></i> Back to previous page
+            </a>
+        </p>
+    </div>
+    <div class="col-md-6 text-right">
+        <p>
+            <a href="/Member/AddMember" class="btn btn-success">
+                <i class="fa fa-book"></i> Add New Member
+            </a>
+        </p>
+    </div>
+</div>

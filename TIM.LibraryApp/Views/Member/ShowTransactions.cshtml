@@ -1,0 +1,99 @@
+﻿@using TIM.LibraryApp.Models
+@model IEnumerable<MemberTransactions>
+
+@{
+    ViewBag.Title = "ShowTransactions";
+}
+
+<!-- begin panel -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Member Transaction List</h4>
+    </div>
+    <div class="panel-body">
+        <!-- begin table-responsive -->
+        <div class="table-responsive">
+            <table class="table table-hover m-b-0 text-inverse">
+                @if (Model == null)
+                {
+                    <tr>
+                        <td colspan="10">No Record's found.</td>
+                    </tr>
+                }
+                else
+                {
+                    <thead>
+                        <tr class="danger">
+                            <th></th>
+                            <th>Member Name</th>
+                            <th>Book Name</th>
+                            <th>ISBN</th>
+                            <th>Request Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Penalty</th>
+                        </tr>
+                    </thead>
+
+                    int i = 1;
+
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@(item.MemberName + " " + item.MemberSurname)</td>
+                            <td>@item.BookName</td>
+                            <td>@item.ISBN</td>
+                            <td>@(item.RequestDate.Day + "." + item.RequestDate.Month + "." + item.RequestDate.Year)</td>
+
+                            @if ((item.DueDate == DateTime.Now.AddDays(2) || item.DueDate == DateTime.Now.AddDays(1) || item.DueDate == DateTime.Now) && item.ReturnDate == null)
+                            {
+                                <td><span class="label label-warning f-s-11">@(item.DueDate.Day + "." + item.DueDate.Month + "." + item.DueDate.Year)</span></td>
+                            }
+                            else if (item.Penalty > 0 && item.ReturnDate == null)
+                            {
+                                <td><span class="label label-danger f-s-11">Not returned! - Due date : @(item.DueDate.Day + "." + item.DueDate.Month + "." + item.DueDate.Year)</span></td>
+                            }
+                            else
+                            {
+                                <td>@(item.DueDate.Day + "." + item.DueDate.Month + "." + item.DueDate.Year)</td>
+                            }
+
+
+                            @if (item.ReturnDate != null)
+                            {
+                                <td>@(item.ReturnDate.Value.Day + "." + item.ReturnDate.Value.Month + "." + item.ReturnDate.Value.Year)</td>
+                            }
+                            else
+                            {
+                                <td>-</td>
+                            }
+
+                            @if (item.Penalty == 0)
+                            {
+                                <td>-</td>
+                            }
+                            else
+                            {
+                                <td><span class="label label-danger f-s-11">@item.Penalty</span></td>
+                            }
+                        </tr>
+                        i++;
+                    }
+                }
+            </table>
+        </div>
+        <!-- end table-responsive -->
+    </div>
+</div>
+<!-- end panel -->
+
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <a href="javascript:history.back(-1);" class="btn btn-success">
+                <i class="fa fa-arrow-circle-left"></i> Back to previous page
+            </a>
+        </p>
+    </div>
+</div>
